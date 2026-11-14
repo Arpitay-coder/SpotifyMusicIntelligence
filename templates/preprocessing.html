@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Preprocessing — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Preprocessing</h1>
+    <p class="page-subtitle">Turning the raw CSV into a clean, model-ready dataset.</p>
+  </div>
+</div>
+
+<div class="grid grid-2" style="margin-bottom:18px;">
+  <div class="card">
+    <div class="section-title">Before Preprocessing</div>
+    <div class="metric-row">
+      <div class="metric-pill"><div class="v">{{ '{:,}'.format(report.before.rows) }}</div><div class="l">Rows</div></div>
+      <div class="metric-pill"><div class="v">{{ report.before.columns }}</div><div class="l">Columns</div></div>
+      <div class="metric-pill"><div class="v">{{ report.before.missing_values }}</div><div class="l">Missing values</div></div>
+      <div class="metric-pill"><div class="v">{{ '{:,}'.format(report.before.duplicate_track_ids) }}</div><div class="l">Duplicate track_ids</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">After Preprocessing</div>
+    <div class="metric-row">
+      <div class="metric-pill"><div class="v">{{ '{:,}'.format(report.after.rows) }}</div><div class="l">Rows</div></div>
+      <div class="metric-pill"><div class="v">{{ report.after.columns }}</div><div class="l">Columns</div></div>
+      <div class="metric-pill"><div class="v">{{ report.after.missing_values }}</div><div class="l">Missing values</div></div>
+      <div class="metric-pill"><div class="v">{{ report.after.duplicate_track_ids }}</div><div class="l">Duplicate track_ids</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Transformation Steps (applied in order)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th style="width:38%">Step</th><th>Detail</th></tr></thead>
+      <tbody>
+        {% for s in report.steps %}
+        <tr><td>{{ s.step }}</td><td>{{ s.detail }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="grid grid-2" style="margin-top:18px;">
+  <div class="card">
+    <div class="section-title">Numeric Features (scaled per-model, never blindly)</div>
+    <div class="pill-row">{% for f in report.numeric_features %}<span class="badge">{{ f }}</span>{% endfor %}</div>
+    <p class="section-desc">Scaling (StandardScaler) is applied only inside each model/clustering module, right before training — never globally to the whole dataframe — so train/test splits and different pages stay independent.</p>
+  </div>
+  <div class="card">
+    <div class="section-title">Categorical / Text Features (left as-is)</div>
+    <div class="pill-row">{% for f in report.categorical_features %}<span class="badge muted">{{ f }}</span>{% endfor %}</div>
+    <p class="section-desc">Never fed as raw numeric input into distance-based or regression models.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Outlier Inspection (IQR method) — informational, nothing dropped</div>
+  <div class="section-desc">Values outside 1.5&times;IQR of the interquartile range, per feature. These are real musical variation (e.g. very quiet ambient tracks, very fast tempo tracks) — not data errors — so they are reported, not removed.</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Feature</th><th>Outliers</th><th>% of data</th><th>Lower bound</th><th>Upper bound</th></tr></thead>
+      <tbody>
+        {% for feat, o in report.outliers.items() %}
+        <tr><td>{{ feat }}</td><td>{{ o.count }}</td><td>{{ o.pct }}%</td><td>{{ o.lower_bound }}</td><td>{{ o.upper_bound }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

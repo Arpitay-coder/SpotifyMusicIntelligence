@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}AdaBoost — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">AdaBoost</h1>
+    <p class="page-subtitle">Adaptive Boosting on the same High vs Low popularity target.</p>
+  </div>
+</div>
+
+<div class="concept-box">
+  AdaBoost trains a sequence of <strong>weak learners</strong> (here, shallow decision stumps). After each round,
+  misclassified tracks get more weight, so the next weak learner focuses harder on the previous mistakes. The final
+  prediction is a weighted vote across all weak learners.
+</div>
+
+<div class="badge warn" style="margin-bottom:14px;">Threshold: popularity &ge; {{ res.threshold }} ({{ res.percentile }}th percentile) — same target as Logistic Regression &amp; XGBoost</div>
+
+<div class="card">
+  <div class="section-title">Metrics</div>
+  <div class="metric-row">
+    <div class="metric-pill"><div class="v">{{ res.metrics.accuracy }}</div><div class="l">Accuracy</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.precision }}</div><div class="l">Precision</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.recall }}</div><div class="l">Recall</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.f1 }}</div><div class="l">F1 Score</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.roc_auc }}</div><div class="l">ROC-AUC</div></div>
+  </div>
+  <div class="pill-row" style="margin-top:10px">
+    <span class="badge muted">n_estimators: {{ res.params.n_estimators }}</span>
+    <span class="badge muted">learning_rate: {{ res.params.learning_rate }}</span>
+    <span class="badge muted">base: {{ res.params.base_estimator }}</span>
+    <span class="badge muted">Training time: {{ res.train_seconds }}s</span>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_cm" class="chart-box"></div></div>
+  <div class="card"><div id="p_imp" class="chart-box"></div></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_cm", {{ res.figs.confusion_matrix|tojson }});
+  renderPlot("p_imp", {{ res.figs.feature_importance|tojson }});
+</script>
+{% endblock %}

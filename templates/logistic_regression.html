@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Logistic Regression — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Logistic Regression</h1>
+    <p class="page-subtitle">Classifying tracks as High vs Low popularity.</p>
+  </div>
+</div>
+
+<div class="concept-box">
+  <strong>Target definition (transparent &amp; reproducible):</strong> <code>High_Popularity = 1</code> if
+  <code>popularity &ge; {{ res.threshold }}</code> (the {{ res.percentile }}th percentile of the cleaned dataset), else 0.
+  This makes {{ (res.positive_rate*100)|round(1) }}% of tracks "High Popularity".<br><br>
+  Logistic Regression passes a linear combination of features through the <strong>sigmoid function</strong>
+  <code>&sigma;(z) = 1 / (1 + e<sup>-z</sup>)</code> to squash the result into a 0–1 probability, then thresholds at 0.5.
+</div>
+
+<div class="badge warn" style="margin-bottom:14px;">Threshold used: popularity &ge; {{ res.threshold }} ({{ res.percentile }}th percentile)</div>
+
+<div class="card">
+  <div class="section-title">Metrics</div>
+  <div class="metric-row">
+    <div class="metric-pill"><div class="v">{{ res.metrics.accuracy }}</div><div class="l">Accuracy</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.precision }}</div><div class="l">Precision</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.recall }}</div><div class="l">Recall</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.f1 }}</div><div class="l">F1 Score</div></div>
+    <div class="metric-pill"><div class="v">{{ res.metrics.roc_auc }}</div><div class="l">ROC-AUC</div></div>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_cm" class="chart-box"></div></div>
+  <div class="card"><div id="p_roc" class="chart-box"></div></div>
+</div>
+<div class="grid grid-2">
+  <div class="card"><div id="p_proba" class="chart-box"></div></div>
+  <div class="card"><div id="p_sigmoid" class="chart-box"></div></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_cm", {{ res.figs.confusion_matrix|tojson }});
+  renderPlot("p_roc", {{ res.figs.roc_curve|tojson }});
+  renderPlot("p_proba", {{ res.figs.probability_distribution|tojson }});
+  renderPlot("p_sigmoid", {{ res.figs.sigmoid|tojson }});
+</script>
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Model Comparison — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Model Comparison</h1>
+    <p class="page-subtitle">Side-by-side metrics across every model and clustering algorithm on this dashboard.</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Classification — Logistic Regression vs XGBoost vs AdaBoost</div>
+  <div class="section-desc">All three predict the same High vs Low popularity target defined on the Logistic Regression page.</div>
+  <div id="p_cls" class="chart-box"></div>
+  <div class="table-wrap" style="margin-top:14px;">
+    <table>
+      <thead><tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr></thead>
+      <tbody>
+        {% for row in cls_comp.table %}
+        <tr><td>{{ row.model }}</td><td>{{ row.accuracy }}</td><td>{{ row.precision }}</td><td>{{ row.recall }}</td><td>{{ row.f1 }}</td><td>{{ row.roc_auc }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Regression — Linear vs Ridge vs Lasso vs Elastic Net</div>
+  <div class="section-desc">All four predict track popularity from numeric audio features.</div>
+  <div class="grid grid-2">
+    <div id="p_reg_err" class="chart-box"></div>
+    <div id="p_reg_r2" class="chart-box"></div>
+  </div>
+  <div class="table-wrap" style="margin-top:14px;">
+    <table>
+      <thead><tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R&sup2;</th></tr></thead>
+      <tbody>
+        {% for row in reg_comp.table %}
+        <tr><td>{{ row.model }}</td><td>{{ row.mae }}</td><td>{{ row.rmse }}</td><td>{{ row.r2 }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Clustering — K-Means vs K-Means++ vs Hierarchical vs DBSCAN</div>
+  <div class="section-desc">Default parameters (K=4, danceability/energy/valence features). Silhouette ranges from -1 (poor) to 1 (well-separated); DBSCAN's noise points are excluded from its silhouette calculation.</div>
+  <div id="p_clust" class="chart-box"></div>
+  <div class="table-wrap" style="margin-top:14px;">
+    <table>
+      <thead><tr><th>Algorithm</th><th>Silhouette</th><th>Clusters</th><th>Noise Points</th></tr></thead>
+      <tbody>
+        {% for row in clust_comp.table %}
+        <tr><td>{{ row.algorithm }}</td><td>{{ row.silhouette }}</td><td>{{ row.clusters }}</td><td>{{ row.noise_points }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_cls", {{ cls_comp.fig|tojson }});
+  renderPlot("p_reg_err", {{ reg_comp.fig|tojson }});
+  renderPlot("p_reg_r2", {{ reg_comp.fig_r2|tojson }});
+  renderPlot("p_clust", {{ clust_comp.fig|tojson }});
+</script>
+{% endblock %}

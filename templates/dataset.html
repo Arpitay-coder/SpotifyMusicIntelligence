@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Dataset — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Dataset</h1>
+    <p class="page-subtitle">The real Spotify audio-features dataset used throughout this dashboard — no synthetic data.</p>
+  </div>
+</div>
+
+<div class="grid grid-4" style="margin-bottom:18px;">
+  <div class="stat-card"><div class="stat-value">{{ '{:,}'.format(raw_summary.rows) }}</div><div class="stat-label">Raw Rows (CSV)</div></div>
+  <div class="stat-card"><div class="stat-value">{{ raw_summary.columns }}</div><div class="stat-label">Raw Columns</div></div>
+  <div class="stat-card"><div class="stat-value">{{ '{:,}'.format(stats.n_tracks) }}</div><div class="stat-label">Clean, Unique Tracks</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.n_genres }}</div><div class="stat-label">Genres</div></div>
+</div>
+
+<div class="card">
+  <div class="section-title">Raw File Facts</div>
+  <div class="section-desc">Exactly what's in <code>data/spotify.csv</code> before any cleaning.</div>
+  <div class="metric-row">
+    <div class="metric-pill"><div class="v">{{ '{:,}'.format(raw_summary.missing_values) }}</div><div class="l">Missing values</div></div>
+    <div class="metric-pill"><div class="v">{{ '{:,}'.format(raw_summary.duplicate_track_ids) }}</div><div class="l">Duplicate track_ids</div></div>
+    <div class="metric-pill"><div class="v">{{ raw_summary.duplicate_rows }}</div><div class="l">Fully duplicate rows</div></div>
+  </div>
+  <p class="section-desc" style="margin-top:12px">See the <a href="{{ url_for('preprocessing_page') }}" style="color:var(--accent-bright)">Preprocessing page</a> for how these are handled.</p>
+</div>
+
+<div class="card">
+  <div class="section-title">Columns</div>
+  <div class="pill-row">
+    {% for c in columns %}<span class="badge muted">{{ c }}</span>{% endfor %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Sample Rows (cleaned data)</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr>
+        <th>Track</th><th>Artist</th><th>Genre</th><th>Popularity</th><th>Danceability</th><th>Energy</th><th>Valence</th><th>Tempo</th>
+      </tr></thead>
+      <tbody>
+        {% for row in sample_rows %}
+        <tr>
+          <td>{{ row.track_name }}</td>
+          <td>{{ row.artists }}</td>
+          <td>{{ row.track_genre }}</td>
+          <td>{{ row.popularity }}</td>
+          <td>{{ '%.2f'|format(row.danceability) }}</td>
+          <td>{{ '%.2f'|format(row.energy) }}</td>
+          <td>{{ '%.2f'|format(row.valence) }}</td>
+          <td>{{ '%.1f'|format(row.tempo) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

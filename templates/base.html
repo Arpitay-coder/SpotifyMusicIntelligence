@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Spotify ML Lab{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/plotly.min.js') }}"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="note">&#127925;</span> Spotify ML Lab</div>
+
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-link {{ 'active' if active=='dashboard' }}" href="{{ url_for('index') }}"><span class="dot"></span>Dashboard</a>
+    <a class="nav-link {{ 'active' if active=='dataset' }}" href="{{ url_for('dataset') }}"><span class="dot"></span>Dataset</a>
+    <a class="nav-link {{ 'active' if active=='preprocessing' }}" href="{{ url_for('preprocessing_page') }}"><span class="dot"></span>Preprocessing</a>
+    <a class="nav-link {{ 'active' if active=='eda' }}" href="{{ url_for('eda_page') }}"><span class="dot"></span>EDA</a>
+
+    <div class="nav-section-label">Supervised Learning</div>
+    <a class="nav-link {{ 'active' if active=='linear_regression' }}" href="{{ url_for('linear_regression_page') }}"><span class="dot"></span>Linear Regression</a>
+    <a class="nav-link {{ 'active' if active=='logistic_regression' }}" href="{{ url_for('logistic_regression_page') }}"><span class="dot"></span>Logistic Regression</a>
+    <a class="nav-link {{ 'active' if active=='xgboost' }}" href="{{ url_for('xgboost_page') }}"><span class="dot"></span>XGBoost</a>
+    <a class="nav-link {{ 'active' if active=='adaboost' }}" href="{{ url_for('adaboost_page') }}"><span class="dot"></span>AdaBoost</a>
+
+    <div class="nav-section-label">Unsupervised Learning</div>
+    <a class="nav-link {{ 'active' if active=='clustering' }}" href="{{ url_for('clustering_overview') }}"><span class="dot"></span>Clustering</a>
+    <a class="nav-link sub {{ 'active' if active=='kmeans' }}" href="{{ url_for('clustering_kmeans') }}">K-Means</a>
+    <a class="nav-link sub {{ 'active' if active=='kmeans_pp' }}" href="{{ url_for('clustering_kmeans_pp') }}">K-Means++</a>
+    <a class="nav-link sub {{ 'active' if active=='hierarchical' }}" href="{{ url_for('clustering_hierarchical') }}">Hierarchical</a>
+    <a class="nav-link sub {{ 'active' if active=='dbscan' }}" href="{{ url_for('clustering_dbscan') }}">DBSCAN</a>
+    <a class="nav-link sub {{ 'active' if active=='animation' }}" href="{{ url_for('clustering_animation') }}">Cluster Animation</a>
+
+    <div class="nav-section-label">Summary</div>
+    <a class="nav-link {{ 'active' if active=='model_comparison' }}" href="{{ url_for('model_comparison_page') }}"><span class="dot"></span>Model Comparison</a>
+    <a class="nav-link {{ 'active' if active=='insights' }}" href="{{ url_for('music_insights_page') }}"><span class="dot"></span>Music Insights</a>
+  </aside>
+
+  <main class="main">
+    {% block content %}{% endblock %}
+
+    <footer class="app-footer">
+      <span>Spotify Music Intelligence — Project 12 · ML/Data Science Dashboard</span>
+      <span>Flask &middot; scikit-learn &middot; XGBoost &middot; Plotly</span>
+    </footer>
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

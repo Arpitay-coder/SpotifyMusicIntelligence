@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Hierarchical Clustering — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Hierarchical Clustering</h1>
+    <p class="page-subtitle">Bottom-up agglomerative clustering with a real scipy dendrogram.</p>
+  </div>
+</div>
+
+<div class="badge warn" style="margin-bottom:14px;">{{ res.sample_note }}</div>
+
+<form method="get" class="controls-bar" id="controlsForm">
+  <div class="control-group">
+    <label>K</label>
+    <div class="k-selector">
+      {% for kk in range(2, 8) %}
+      <a class="k-btn {{ 'active' if kk==k }}" href="?k={{ kk }}&linkage={{ linkage }}{% for f in selected_features %}&features={{ f }}{% endfor %}">{{ kk }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="control-group">
+    <label>Linkage</label>
+    <select name="linkage" onchange="this.form.submit()">
+      {% for l in ['ward','complete','average'] %}
+      <option value="{{ l }}" {{ 'selected' if l==linkage }}>{{ l }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="control-group">
+    <label>Features</label>
+    <div class="feature-checks">
+      {% for f in all_features %}
+      <label><input type="checkbox" name="features" value="{{ f }}" {{ 'checked' if f in selected_features }}> {{ f }}</label>
+      {% endfor %}
+    </div>
+  </div>
+  <input type="hidden" name="k" value="{{ k }}">
+  <button class="btn" type="submit">Apply</button>
+</form>
+
+<div class="metric-row">
+  <div class="metric-pill"><div class="v">{{ res.silhouette }}</div><div class="l">Silhouette Score</div></div>
+  <div class="metric-pill"><div class="v">{{ k }}</div><div class="l">Clusters (K)</div></div>
+  <div class="metric-pill"><div class="v">{{ linkage }}</div><div class="l">Linkage</div></div>
+</div>
+
+<div class="card"><div id="p_dendro" class="chart-box"></div></div>
+<div class="card"><div id="p_scatter" class="chart-box"></div></div>
+
+<div class="card">
+  <div class="section-title">Cluster Sizes</div>
+  <div class="pill-row">
+    {% for c, n in res.cluster_counts.items() %}<span class="badge muted">Cluster {{ c }}: {{ n }} tracks</span>{% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_dendro", {{ res.figs.dendrogram|tojson }});
+  renderPlot("p_scatter", {{ res.figs.scatter|tojson }});
+  document.querySelectorAll('#controlsForm input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => document.getElementById('controlsForm').submit());
+  });
+</script>
+{% endblock %}

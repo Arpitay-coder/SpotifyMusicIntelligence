@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}DBSCAN — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">DBSCAN</h1>
+    <p class="page-subtitle"><code>DBSCAN(eps=eps, min_samples=min_samples)</code> — density-based clustering with explicit noise detection.</p>
+  </div>
+</div>
+
+<div class="concept-box">
+  DBSCAN groups tracks that are densely packed together in feature space and marks tracks in low-density regions as
+  <strong>noise</strong> (label <code>-1</code>) rather than forcing them into a cluster. Unlike K-Means, it does not
+  need K specified up front and can find clusters of any shape. <code>eps</code> sets the neighborhood radius;
+  <code>min_samples</code> sets how many neighbors a track needs within that radius to be a "core" track.
+</div>
+
+<form method="get" class="controls-bar" id="controlsForm">
+  <div class="control-group">
+    <label>EPS: {{ eps }}</label>
+    <input type="range" name="eps" min="0.05" max="0.6" step="0.05" value="{{ eps }}" oninput="this.previousElementSibling.textContent='EPS: '+this.value" onchange="this.form.submit()">
+  </div>
+  <div class="control-group">
+    <label>Min Samples: {{ min_samples }}</label>
+    <input type="range" name="min_samples" min="3" max="20" step="1" value="{{ min_samples }}" oninput="this.previousElementSibling.textContent='Min Samples: '+this.value" onchange="this.form.submit()">
+  </div>
+  <div class="control-group">
+    <label>Features</label>
+    <div class="feature-checks">
+      {% for f in all_features %}
+      <label><input type="checkbox" name="features" value="{{ f }}" {{ 'checked' if f in selected_features }}> {{ f }}</label>
+      {% endfor %}
+    </div>
+  </div>
+  <button class="btn" type="submit">Apply</button>
+</form>
+
+<div class="pill-row">
+  <span class="badge muted">Clustering sample: {{ res.n_points }} of {{ res.sample_size }} requested (interactive performance)</span>
+</div>
+
+<div class="metric-row">
+  <div class="metric-pill"><div class="v">{{ res.n_clusters }}</div><div class="l">Clusters Found</div></div>
+  <div class="metric-pill"><div class="v">{{ res.n_noise }}</div><div class="l">Noise Points (-1)</div></div>
+  <div class="metric-pill"><div class="v">{{ res.silhouette if res.silhouette is not none else 'n/a' }}</div><div class="l">Silhouette</div></div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_scatter" class="chart-box"></div></div>
+  <div class="card"><div id="p_dist" class="chart-box"></div></div>
+</div>
+
+<p class="section-desc">Want to see how DBSCAN arrives at these clusters, step by step? Watch the
+  <a href="{{ url_for('clustering_animation') }}" style="color:var(--accent-bright)">DBSCAN animation</a>.</p>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_scatter", {{ res.figs.scatter|tojson }});
+  renderPlot("p_dist", {{ res.figs.distribution|tojson }});
+  document.querySelectorAll('#controlsForm input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => document.getElementById('controlsForm').submit());
+  });
+</script>
+{% endblock %}

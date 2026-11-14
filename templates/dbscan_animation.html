@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}DBSCAN Animation — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">DBSCAN — Discovering Music Communities</h1>
+    <p class="page-subtitle">Watch DBSCAN visit real tracks one at a time, expand its &epsilon;-neighborhood, and grow clusters live.</p>
+  </div>
+</div>
+
+<div class="pill-row">
+  <span class="badge">{{ anim.n_points }} sampled tracks</span>
+  <span class="badge muted">&epsilon; = {{ anim.eps }}</span>
+  <span class="badge muted">min_samples = {{ anim.min_samples }}</span>
+  <span class="badge muted">Features: danceability, energy</span>
+</div>
+
+<div class="card">
+  <div class="anim-wrap">
+    <div class="anim-canvas-box">
+      <div class="anim-controls">
+        <button id="playBtn">&#9658; Play</button>
+        <button id="stepBtn">Step</button>
+        <button id="resetBtn">&#8635; Reset</button>
+        <span class="counter" id="dbCounter">Step 0 / 0</span>
+      </div>
+      <svg id="dbscanSvg" width="100%" style="display:block">
+        <g id="dbEpsRing"></g>
+        <g id="dbPoints"></g>
+      </svg>
+      <p class="section-desc" id="dbMsg" style="min-height:20px;margin-top:10px">Press play to start.</p>
+      <div class="legend-row">
+        <span><span class="sw" style="background:#1DB954;"></span>core track</span>
+        <span><span class="sw" style="background:#1DB954;opacity:0.5"></span>border track</span>
+        <span><span class="sw" style="background:#4B564F;"></span>noise track</span>
+        <span><span class="sw" style="background:#1ED760;"></span>active track (&epsilon; ring)</span>
+      </div>
+    </div>
+    <div class="anim-info">
+      <div class="section-title" style="margin-bottom:2px;">Now Visiting</div>
+      <dl style="margin:0">
+        <dt>Current Track</dt><dd id="infoTrack">—</dd>
+        <dt>Artist</dt><dd id="infoArtist">—</dd>
+        <dt>Community</dt><dd id="infoCluster">—</dd>
+        <dt>Point Type</dt><dd id="infoType">—</dd>
+        <dt>EPS</dt><dd>{{ anim.eps }}</dd>
+        <dt>Min Samples</dt><dd>{{ anim.min_samples }}</dd>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">What's happening</div>
+  <div class="section-desc">
+    Each dot is a real track, positioned by its danceability (x) and energy (y). DBSCAN visits tracks one at a time:
+    if a track has at least <code>min_samples</code> neighbors within &epsilon; (the pulsing ring), it's a
+    <strong>core</strong> track and starts or joins a music community; neighbors that don't meet the density
+    threshold themselves but sit near a core track become <strong>border</strong> tracks; tracks with too few
+    neighbors anywhere become <strong>noise</strong>.
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dbscan_animation.js') }}"></script>
+<script>
+  const ANIM_DATA = {{ anim_json|safe }};
+  document.addEventListener("DOMContentLoaded", function () {
+    initDbscanAnimation(ANIM_DATA);
+  });
+</script>
+{% endblock %}

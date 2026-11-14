@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Spotify ML Lab{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="notes" id="heroNotes"></div>
+  <h1>Spotify Music Intelligence</h1>
+  <p>Explore Music Through Data, Machine Learning &amp; Clustering — a full analytics pipeline built on ~90,000 real Spotify tracks.</p>
+  <span class="badge">&#9679; Live dashboard · 12 ML modules</span>
+  <div class="equalizer" id="heroEqualizer"></div>
+</section>
+
+<div class="grid grid-5" style="margin-bottom:20px;">
+  <div class="stat-card"><div class="stat-value">{{ '{:,}'.format(stats.n_tracks) }}</div><div class="stat-label">Tracks</div></div>
+  <div class="stat-card"><div class="stat-value">{{ '{:,}'.format(stats.n_artists) }}</div><div class="stat-label">Artists</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.n_genres }}</div><div class="stat-label">Genres</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.avg_popularity }}</div><div class="stat-label">Avg Popularity</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.avg_danceability }}</div><div class="stat-label">Avg Danceability</div></div>
+</div>
+<div class="grid grid-3" style="margin-bottom:20px;">
+  <div class="stat-card"><div class="stat-value">{{ stats.avg_energy }}</div><div class="stat-label">Avg Energy</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.avg_valence }}</div><div class="stat-label">Avg Valence</div></div>
+  <div class="stat-card"><div class="stat-value">{{ stats.avg_tempo }}</div><div class="stat-label">Avg Tempo (BPM)</div></div>
+</div>
+
+<div class="card">
+  <div class="section-title">ML Pipeline</div>
+  <div class="section-desc">Every stage below is a real, working page — click any node's matching sidebar entry to open it.</div>
+  <div class="pipeline">
+    <span class="step">Spotify Dataset</span><span class="arrow">&rarr;</span>
+    <span class="step">Data Cleaning</span><span class="arrow">&rarr;</span>
+    <span class="step">Preprocessing</span><span class="arrow">&rarr;</span>
+    <span class="step">EDA</span><span class="arrow">&rarr;</span>
+    <span class="step">Regression</span><span class="arrow">&rarr;</span>
+    <span class="step">Classification</span><span class="arrow">&rarr;</span>
+    <span class="step">Boosting</span><span class="arrow">&rarr;</span>
+    <span class="step">Clustering</span><span class="arrow">&rarr;</span>
+    <span class="step">Music Insights</span>
+  </div>
+</div>
+
+<div class="grid grid-3" style="margin-top:18px;">
+  <div class="card">
+    <div class="section-title">&#128200; Supervised Learning</div>
+    <div class="section-desc">Linear/Ridge/Lasso/ElasticNet regression predicting popularity, plus Logistic Regression, XGBoost and AdaBoost classifying High vs Low popularity tracks.</div>
+    <a class="btn" href="{{ url_for('linear_regression_page') }}">Explore &rarr;</a>
+  </div>
+  <div class="card">
+    <div class="section-title">&#127925; Unsupervised Learning</div>
+    <div class="section-desc">K-Means, K-Means++, Hierarchical and DBSCAN clustering of tracks by audio character, plus an interactive DBSCAN animation.</div>
+    <a class="btn" href="{{ url_for('clustering_overview') }}">Explore &rarr;</a>
+  </div>
+  <div class="card">
+    <div class="section-title">&#128161; Music Insights</div>
+    <div class="section-desc">Automatically generated, data-driven findings pulled directly from the cleaned dataset and trained models.</div>
+    <a class="btn" href="{{ url_for('music_insights_page') }}">Explore &rarr;</a>
+  </div>
+</div>
+
+{% endblock %}

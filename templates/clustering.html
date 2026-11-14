@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Clustering — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Clustering — Unsupervised Learning</h1>
+    <p class="page-subtitle">Grouping tracks by audio character, with no popularity or genre label involved.</p>
+  </div>
+</div>
+
+<div class="concept-box">
+  All four algorithms below cluster tracks using numeric audio features, scaled with <code>StandardScaler</code>
+  first (so a feature like tempo, on a 0–200+ scale, doesn't dominate the distance calculation over danceability,
+  which is 0–1). Default features are <strong>danceability, energy, valence</strong> — change them on each page.
+  Clustering runs on a random sample of the cleaned dataset (not all ~90k rows) so the interactive controls
+  (K, eps, min samples) recompute in under a second — this is disclosed on every clustering page.
+</div>
+
+<div class="grid grid-2" style="margin-top:18px;">
+  <div class="card">
+    <div class="section-title">K-Means</div>
+    <div class="section-desc">Partitions tracks into K groups by minimizing within-cluster distance to a centroid, starting from <em>random</em> initial centroids.</div>
+    <a class="btn" href="{{ url_for('clustering_kmeans') }}">Open &rarr;</a>
+  </div>
+  <div class="card">
+    <div class="section-title">K-Means++</div>
+    <div class="section-desc">Same algorithm, but centroids are initialized farther apart on purpose — typically faster, more consistent convergence.</div>
+    <a class="btn" href="{{ url_for('clustering_kmeans_pp') }}">Open &rarr;</a>
+  </div>
+  <div class="card">
+    <div class="section-title">Hierarchical Clustering</div>
+    <div class="section-desc">Builds a tree of nested clusters (dendrogram) via bottom-up agglomeration — no need to pick K in advance.</div>
+    <a class="btn" href="{{ url_for('clustering_hierarchical') }}">Open &rarr;</a>
+  </div>
+  <div class="card">
+    <div class="section-title">DBSCAN</div>
+    <div class="section-desc">Density-based clustering that finds arbitrarily-shaped clusters and explicitly flags outliers as noise (label -1).</div>
+    <a class="btn" href="{{ url_for('clustering_dbscan') }}">Open &rarr;</a>
+  </div>
+</div>
+
+<div class="card" style="margin-top:18px;">
+  <div class="section-title">&#9654; DBSCAN — Discovering Music Communities</div>
+  <div class="section-desc">A step-by-step, Spotify-themed animation of DBSCAN growing clusters and flagging noise tracks in real time.</div>
+  <a class="btn" href="{{ url_for('clustering_animation') }}">Watch the animation &rarr;</a>
+</div>
+{% endblock %}

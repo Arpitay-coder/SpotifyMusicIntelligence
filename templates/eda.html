@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}EDA — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Exploratory Data Analysis</h1>
+    <p class="page-subtitle">Interactive distributions, comparisons and correlations across the cleaned dataset.</p>
+  </div>
+</div>
+
+<div class="grid grid-4" style="margin-bottom:18px;">
+  <div class="stat-card"><div class="stat-value">{{ '{:,}'.format(eda.overview.n_tracks) }}</div><div class="stat-label">Tracks</div></div>
+  <div class="stat-card"><div class="stat-value">{{ '{:,}'.format(eda.overview.n_artists) }}</div><div class="stat-label">Artists</div></div>
+  <div class="stat-card"><div class="stat-value">{{ eda.overview.n_genres }}</div><div class="stat-label">Genres</div></div>
+  <div class="stat-card"><div class="stat-value">{{ eda.overview.explicit_pct }}%</div><div class="stat-label">Explicit Tracks</div></div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_popularity_dist" class="chart-box"></div></div>
+  <div class="card"><div id="p_danceability_dist" class="chart-box"></div></div>
+  <div class="card"><div id="p_energy_dist" class="chart-box"></div></div>
+  <div class="card"><div id="p_valence_dist" class="chart-box"></div></div>
+  <div class="card"><div id="p_tempo_dist" class="chart-box"></div></div>
+  <div class="card"><div id="p_duration_dist" class="chart-box"></div></div>
+</div>
+
+<div class="card"><div id="p_top_artists" class="chart-box"></div></div>
+<div class="card"><div id="p_top_tracks" class="chart-box"></div></div>
+<div class="card"><div id="p_genre_counts" class="chart-box"></div></div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_genre_vs_popularity" class="chart-box"></div></div>
+  <div class="card"><div id="p_genre_vs_energy" class="chart-box"></div></div>
+</div>
+<div class="card"><div id="p_genre_vs_danceability" class="chart-box"></div></div>
+
+<div class="card"><div id="p_correlation_heatmap" class="chart-box"></div></div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_explicit_comparison" class="chart-box"></div></div>
+  <div class="card"><div id="p_audio_feature_box" class="chart-box"></div></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_popularity_dist", {{ eda.figs.popularity_dist|tojson }});
+  renderPlot("p_danceability_dist", {{ eda.figs.danceability_dist|tojson }});
+  renderPlot("p_energy_dist", {{ eda.figs.energy_dist|tojson }});
+  renderPlot("p_valence_dist", {{ eda.figs.valence_dist|tojson }});
+  renderPlot("p_tempo_dist", {{ eda.figs.tempo_dist|tojson }});
+  renderPlot("p_duration_dist", {{ eda.figs.duration_dist|tojson }});
+  renderPlot("p_top_artists", {{ eda.figs.top_artists|tojson }});
+  renderPlot("p_top_tracks", {{ eda.figs.top_tracks|tojson }});
+  renderPlot("p_genre_counts", {{ eda.figs.genre_counts|tojson }});
+  renderPlot("p_genre_vs_popularity", {{ eda.figs.genre_vs_popularity|tojson }});
+  renderPlot("p_genre_vs_energy", {{ eda.figs.genre_vs_energy|tojson }});
+  renderPlot("p_genre_vs_danceability", {{ eda.figs.genre_vs_danceability|tojson }});
+  renderPlot("p_correlation_heatmap", {{ eda.figs.correlation_heatmap|tojson }});
+  renderPlot("p_explicit_comparison", {{ eda.figs.explicit_comparison|tojson }});
+  renderPlot("p_audio_feature_box", {{ eda.figs.audio_feature_box|tojson }});
+</script>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Not Found — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="card" style="text-align:center; padding:60px 20px;">
+  <div class="section-title" style="font-size:22px;">&#127925; Track Not Found (404)</div>
+  <p class="section-desc">That page doesn't exist. Try one of the sections in the sidebar.</p>
+  <a class="btn" href="{{ url_for('index') }}">Back to Dashboard</a>
+</div>
+{% endblock %}

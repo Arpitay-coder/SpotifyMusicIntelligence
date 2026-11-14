@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Linear Regression — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Linear Regression</h1>
+    <p class="page-subtitle">Predicting track <code>popularity</code> from numeric audio features.</p>
+  </div>
+</div>
+
+<div class="concept-box">
+  <strong>What is Linear Regression?</strong> A model that fits a straight-line relationship between inputs and a
+  continuous output: <code>y = w&#8321;x&#8321; + w&#8322;x&#8322; + ... + b</code>. Here, <code>y</code> is popularity (0–100)
+  and <code>x</code> are audio features (danceability, energy, loudness, etc.).<br><br>
+  <strong>Why used here?</strong> Popularity is a continuous score, making this a regression problem, and linear
+  regression gives a fast, interpretable baseline.<br><br>
+  <strong>Ridge / Lasso / Elastic Net</strong> add a penalty on coefficient size (L2 / L1 / both) to reduce
+  overfitting — Lasso can shrink unhelpful features' weights to exactly zero.<br><br>
+  <strong>Metrics:</strong> <code>MAE</code> (average absolute error), <code>RMSE</code> (root mean squared error,
+  penalizes big misses more), <code>R&sup2;</code> (share of variance explained, 1.0 = perfect).
+</div>
+
+<div class="card">
+  <div class="section-title">Setup</div>
+  <div class="pill-row">
+    <span class="badge">Target: popularity</span>
+    <span class="badge muted">Train: {{ '{:,}'.format(res.n_train) }}</span>
+    <span class="badge muted">Test: {{ '{:,}'.format(res.n_test) }}</span>
+  </div>
+  <div class="pill-row">{% for f in res.features %}<span class="badge muted">{{ f }}</span>{% endfor %}</div>
+</div>
+
+<div class="card">
+  <div class="section-title">Model Metrics</div>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Model</th><th>MAE</th><th>RMSE</th><th>R&sup2;</th></tr></thead>
+      <tbody>
+        {% for name, r in res.results.items() %}
+        <tr class="{{ 'best' if name==res.best_model }}">
+          <td>{{ name }} {% if name==res.best_model %}<span class="badge">best R&sup2;</span>{% endif %}</td>
+          <td>{{ r.mae }}</td><td>{{ r.rmse }}</td><td>{{ r.r2 }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_avp" class="chart-box"></div></div>
+  <div class="card"><div id="p_resid" class="chart-box"></div></div>
+</div>
+<div class="grid grid-2">
+  <div class="card"><div id="p_comp_err" class="chart-box"></div></div>
+  <div class="card"><div id="p_comp_r2" class="chart-box"></div></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_avp", {{ res.figs.actual_vs_predicted|tojson }});
+  renderPlot("p_resid", {{ res.figs.residual_plot|tojson }});
+  renderPlot("p_comp_err", {{ res.figs.comparison_error|tojson }});
+  renderPlot("p_comp_r2", {{ res.figs.comparison_r2|tojson }});
+</script>
+{% endblock %}

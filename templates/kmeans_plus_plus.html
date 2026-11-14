@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}K-Means++ — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">K-Means++ Clustering</h1>
+    <p class="page-subtitle"><code>KMeans(n_clusters=k, init="k-means++", n_init=10, random_state=42)</code></p>
+  </div>
+</div>
+
+<div class="concept-box">
+  Plain K-Means picks its starting centroids uniformly at random, which can occasionally place two centroids in the
+  same dense region and lead to poor convergence. <strong>K-Means++</strong> picks the first centroid at random, then
+  each subsequent centroid with probability proportional to its squared distance from the nearest centroid already
+  chosen — spreading centroids out across the data for faster, more consistent convergence.
+</div>
+
+<form method="get" class="controls-bar" id="controlsForm">
+  <div class="control-group">
+    <label>K</label>
+    <div class="k-selector">
+      {% for kk in range(2, 9) %}
+      <a class="k-btn {{ 'active' if kk==k }}" href="?k={{ kk }}{% for f in selected_features %}&features={{ f }}{% endfor %}">{{ kk }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="control-group">
+    <label>Features</label>
+    <div class="feature-checks">
+      {% for f in all_features %}
+      <label><input type="checkbox" name="features" value="{{ f }}" {{ 'checked' if f in selected_features }}> {{ f }}</label>
+      {% endfor %}
+    </div>
+  </div>
+  <input type="hidden" name="k" value="{{ k }}">
+  <button class="btn" type="submit">Apply</button>
+</form>
+
+<div class="pill-row">
+  <span class="badge muted">Clustering sample: {{ res.n_points }} of {{ res.sample_size }} requested (interactive performance)</span>
+</div>
+
+<div class="metric-row">
+  <div class="metric-pill"><div class="v">{{ res.wcss }}</div><div class="l">WCSS (K-Means++)</div></div>
+  <div class="metric-pill"><div class="v">{{ res.silhouette }}</div><div class="l">Silhouette</div></div>
+  <div class="metric-pill"><div class="v">{{ res.random_init_wcss }}</div><div class="l">WCSS (Random Init)</div></div>
+  <div class="metric-pill"><div class="v">{{ res.random_init_silhouette }}</div><div class="l">Silhouette (Random)</div></div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card"><div id="p_scatter" class="chart-box"></div></div>
+  <div class="card"><div id="p_comp" class="chart-box"></div></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+  renderPlot("p_scatter", {{ res.figs.scatter|tojson }});
+  renderPlot("p_comp", {{ res.figs.comparison|tojson }});
+  document.querySelectorAll('#controlsForm input[type=checkbox]').forEach(cb => {
+    cb.addEventListener('change', () => document.getElementById('controlsForm').submit());
+  });
+</script>
+{% endblock %}

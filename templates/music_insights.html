@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Music Insights — Spotify ML Lab{% endblock %}
+{% block content %}
+<div class="topbar">
+  <div>
+    <h1 class="page-title">Music Insights</h1>
+    <p class="page-subtitle">Automatically generated findings, pulled directly from the cleaned dataset and trained models — nothing invented.</p>
+  </div>
+</div>
+
+<div class="grid" style="grid-template-columns:1fr; gap:12px;">
+  {% for insight in insights %}
+  <div class="insight-card">
+    <span class="n">{{ '%02d'|format(loop.index) }}</span>
+    <p>{{ insight }}</p>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card" style="margin-top:18px;">
+  <div class="section-title">Where these come from</div>
+  <div class="section-desc">
+    Each statement above is computed live from the cleaned ~90k-track dataset (genre averages, the classification
+    threshold used on the Logistic Regression page, feature correlations with popularity, and the current K-Means
+    clustering result) — refresh this page after changing model parameters elsewhere and the underlying numbers stay
+    consistent with what you see on those pages.
+  </div>
+</div>
+{% endblock %}
